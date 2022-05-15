@@ -1,0 +1,20 @@
+version: '3.7'
+
+services:
+    php:
+        volumes:
+            - '..:/opt/app'
+        build:
+            args:
+                XDEBUG_ENABLED: 'true'
+
+    nginx:
+        volumes:
+            - '..:/opt/app'
+        ports:
+            - "1950:80"
+
+    db:
+      hostname: "dump"
+      ports:
+        - "3304:3306"

@@ -1,0 +1,3 @@
+errors:
+  product:
+    product_name_to_short: 'Proizvod mora imati minimalno 3 znaka'

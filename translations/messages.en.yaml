@@ -1,0 +1,3 @@
+errors:
+  product:
+    product_name_to_short: 'Product name must be at least 3 characters long'

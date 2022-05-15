@@ -1,0 +1,11 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                          https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Domain\Warehouse\Product" table="products">
+        <id name="id" column="id" type="productId" />
+        <embedded name="name" class="App\Domain\Warehouse\VO\ProductName" use-column-prefix="false" />
+        <embedded name="color" class="App\Domain\Warehouse\VO\ProductColor" column-prefix="foo_" />
+    </entity>
+</doctrine-mapping>

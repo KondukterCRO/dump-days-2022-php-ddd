@@ -1,0 +1,88 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+
+    # controllers are imported separately to make sure services can be injected
+    # as action arguments even if you don't extend any base controller class
+    App\Infrastructure\Driving\Common\v1\Endpoint\:
+        resource: '../src/Infrastructure/Driving/Common/v1/Endpoint/*'
+        tags: ['controller.service_arguments']
+
+
+
+    # Application services - Command, Query and Event handlers and Bus configuration
+    App\Application\CommandHandler\:
+        resource: '../src/Application/CommandHandler/*'
+        autoconfigure: false
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    App\Infrastructure\Driven\QueryHandler\:
+        resource: '../src/Infrastructure/Driven/QueryHandler/*'
+        autoconfigure: false
+        tags:
+            - { name: messenger.message_handler, bus: query.bus }
+
+    App\Infrastructure\Driven\EventHandler\:
+        resource: '../src/Infrastructure/Driven/EventHandler/*'
+        autoconfigure: false
+        tags:
+            - { name: messenger.message_handler, bus: event.bus }
+
+    App\Application\Bus\QueryBus:
+        alias: App\Infrastructure\Driven\Bus\MessengerQueryBus
+
+    App\Application\Bus\CommandBus:
+        alias: App\Infrastructure\Driven\Bus\MessengerCommandBus
+
+    App\Application\Bus\EventBus:
+        alias: App\Infrastructure\Driven\Bus\MessengerEventBus
+
+    # Buses
+    App\Infrastructure\Driven\Bus\:
+        resource: '../src/Infrastructure/Driven/Bus/*'
+
+    # Repositories
+    App\Infrastructure\Driven\Persistence\Doctrine\Repository\:
+        resource: '../src/Infrastructure/Driven/Persistence/Doctrine/Repository/*'
+
+    App\Application\Repository\:
+        resource: '../src/Application/Repository/*'
+
+    # Param converters
+    App\Infrastructure\Driven\ParamConverter\:
+        resource: '../src/Infrastructure/Driven/ParamConverter/*'
+
+    # Fixtures
+    App\Infrastructure\Driven\Persistence\Doctrine\Fixtures\:
+        resource: '../src/Infrastructure/Driven/Persistence/Doctrine/Fixtures/*'
+        tags: ['doctrine.fixture.orm']
+
+
+
+    #App\Application\Repository\Warehouse\ProductReadRepository: '@App\Infrastructure\Driven\Persistence\Doctrine\Repository\DoctrineProductReadRepository'
+    App\Application\Repository\Warehouse\ProductReadRepository: '@App\Infrastructure\Driven\Persistence\Redis\Repository\RedisProductReadRepository'
+    App\Application\Repository\Warehouse\ProductWriteRepository: '@App\Infrastructure\Driven\Persistence\Doctrine\Repository\DoctrineProductWriteRepository'
+
+
+    App\Infrastructure\Driving\Common\v1\ApiResponder\:
+        resource: '../src/Infrastructure/Driving/Common/v1/ApiResponder/*'
+
+
+
+    App\Infrastructure\Driven\Persistence\Redis\Repository\:
+        resource: '../src/Infrastructure/Driven/Persistence/Redis/Repository/*'
+
+
